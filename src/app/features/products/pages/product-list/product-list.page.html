@@ -1,0 +1,74 @@
+<section class="products">
+  <div class="header">
+    <app-title [level]="2" [title]="'Gerenciar Produtos'" />
+    <app-button
+      (click)="goToCreate()"
+      [label]="'Adicionar Produto'"
+      [type]="'add-btn'">
+      <app-add-button
+    /></app-button>
+  </div>
+
+  @if (isLoading()) {
+  <app-spinner>Carregando produtos...</app-spinner>
+  } @else {
+  <div class="products-container">
+    @if (filteredProducts().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <app-title [level]="3" [title]="'Nenhum produto encontrado'" />
+
+      <p>Comece adicionando seu primeiro produto!</p>
+      <app-button
+        (click)="goToCreate()"
+        [label]="'Criar Produto'"
+        [type]="'empty-btn'" />
+    </div>
+    } @else {
+    <div class="stats">
+      <span class="count"
+        >{{ filteredProducts().length }} produto(s) encontrado(s)</span
+      >
+    </div>
+
+    <div class="products-grid">
+      @for (product of filteredProducts(); track product.id) {
+      <div class="product-card">
+        <div class="product-header">
+          <app-title [level]="3" [title]="product.name" />
+          <div class="product-actions">
+            <app-button
+              (click)="editProduct(product)"
+              [label]="'Editar'"
+              [type]="'action-btn edit'"
+              >✏️</app-button
+            >
+            <app-button
+              (click)="deleteProduct(product.id!)"
+              [label]="'Excluir'"
+              [type]="'action-btn delete'"
+              >🗑️</app-button
+            >
+          </div>
+        </div>
+
+        <p class="product-description">{{ product.description }}</p>
+
+        <div class="product-details">
+          <span class="product-price">{{
+            product.price | currency : 'BRL'
+          }}</span>
+        </div>
+
+        <div class="product-footer">
+          <span class="product-date">
+            Criado em: {{ createdAt | date : 'dd/MM/yyyy' }}
+          </span>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  }
+</section>

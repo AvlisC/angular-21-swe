@@ -1,0 +1,15 @@
+<div class="container">
+  <img src="assets/not-found.svg" alt="404" />
+  <div class="texts">
+    <app-title [level]="1" [title]="'Página não encontrada'" />
+    <app-title
+      [level]="2"
+      [title]="'A página que você acessou não está disponível.'" />
+  </div>
+  <div class="button">
+    <app-button
+      (click)="goToLists()"
+      [label]="'Ir para listas'"
+      [type]="'empty-btn'" />
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<section class="product-form">
+  <div class="header">
+    <app-title
+      [level]="2"
+      [title]="isEditMode() ? 'Editar Produto' : 'Criar Novo Produto'" />
+    <app-button
+      (click)="goBack()"
+      [label]="'Voltar para Lista'"
+      [type]="'back-btn'" />
+  </div>
+
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="form">
+    <div class="form-group">
+      <label for="name">Nome do Produto *</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="Digite o nome do produto"
+        [class.error]="isFieldInvalid('name')" />
+      @if (isFieldInvalid('name')) {
+      <div class="error-message">Nome é obrigatório (mínimo 3 caracteres)</div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrição</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Descreva o produto"
+        rows="3"></textarea>
+      <div class="char-count">{{ descriptionLength() }}/500 caracteres</div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="price">Preço *</label>
+        <div class="input-with-icon">
+          <span class="currency">R$</span>
+          <input
+            type="number"
+            id="price"
+            formControlName="price"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            [class.error]="isFieldInvalid('price')" />
+        </div>
+        @if (isFieldInvalid('price')) {
+        <div class="error-message">Preço deve ser maior que zero</div>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <app-button (click)="goBack()" [label]="'cancelar'" [type]="'back-btn'" />
+      <app-button
+        (click)="goBack()"
+        [disabled]="productForm.invalid || isLoading()"
+        [label]="isEditMode() ? 'Atualizar Produto' : 'Criar Produto'"
+        [type]="'add-btn'"
+        >@if (isLoading()) {
+        <app-spinner />
+        }</app-button
+      >
+    </div>
+  </form>
+</section>
