@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   OnInit
 } from '@angular/core';
@@ -13,6 +12,7 @@ import { ProductsStore } from '../../products.store';
 import { AppButton } from '../../../../shared/ui/app-button/app-button';
 import { AppSpinner } from '../../../../shared/ui/app-spinner/app-spinner';
 import { AppTitle } from '../../../../shared/ui/app-title/app-title';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-product-form',
@@ -31,23 +31,19 @@ export class ProductFormPage implements OnInit {
   readonly isLoading = this.store.loading;
   readonly isEditMode = this.store.isEditMode;
 
-  form = this.fb.nonNullable.group({
-    name: '',
-    description: '',
-    price: 0
-  });
-
   productForm = this.fb.nonNullable.group({
     name: ['', Validators.required],
     description: ['', [Validators.maxLength(500)]],
     price: [0, [Validators.required, Validators.min(0)]]
   });
 
-  descriptionLength = computed(
-    () => this.productForm.controls.description.value.length
+  descriptionLength = toSignal(
+    this.productForm.controls.description.valueChanges,
+    { initialValue: '' }
   );
 
   ngOnInit() {
+    console.log(this.descriptionLength());
     if (this.isEditMode()) {
       const product = this.store.product;
       this.productForm.patchValue(product());
@@ -64,15 +60,23 @@ export class ProductFormPage implements OnInit {
       this.productForm.markAllAsTouched();
       return;
     }
-
-    console.log(this.productForm.getRawValue());
-    this.router.navigate([PRODUCTS_ROUTES.listProducts]);
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.isEditMode()) {
+      this.service
+        .update(this.store.product().id!, this.productForm.getRawValue())
+        .subscribe({
+          next: () => this.store.load(),
+          complete: () => this.goBack()
+        });
+      return;
+    }
 
-    this.service.create(this.form.getRawValue()).subscribe();
+    this.service.create(this.productForm.getRawValue()).subscribe({
+      next: () => this.store.load(),
+      complete: () => this.goBack()
+    });
   }
 
   goBack() {

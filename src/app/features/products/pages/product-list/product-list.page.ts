@@ -3,8 +3,7 @@ import {
   Component,
   computed,
   inject,
-  OnInit,
-  signal
+  OnInit
 } from '@angular/core';
 import { ProductsStore } from '../../products.store';
 import { ProductsService } from '../../services/products.service';
@@ -38,12 +37,8 @@ export class ProductListPage implements OnInit {
   readonly store = inject(ProductsStore);
   private router = inject(Router);
 
-  readonly showDeleteModal = false;
   readonly isLoading = this.store.loading;
   readonly createdAt = new Date();
-
-  searchTerm = signal('');
-  sortBy = signal<'name' | 'price'>('name');
 
   ngOnInit() {
     this.loadProducts();
@@ -51,32 +46,15 @@ export class ProductListPage implements OnInit {
 
   loadProducts() {
     this.store.setLoading(true);
-
-    this.service.getAll().subscribe({
-      next: products => this.store.setProducts(products),
-      complete: () => this.store.setLoading(false)
-    });
+    this.store.load();
+    this.store.setLoading(false);
   }
 
   filteredProducts = computed(() => {
     const products = this.store.products();
 
-    return [...products].sort((a, b) =>
-      this.sortBy() === 'price'
-        ? a.price - b.price
-        : a.name.localeCompare(b.name)
-    );
+    return [...products];
   });
-
-  calculateTotal() {
-    return this.filteredProducts().reduce((sum, p) => sum + p.price, 0);
-  }
-
-  getStockClass(stock: number) {
-    if (stock === 0) return 'out';
-    if (stock < 5) return 'low';
-    return 'ok';
-  }
 
   confirmDelete() {
     console.log('excluindo produto de id');
@@ -87,7 +65,12 @@ export class ProductListPage implements OnInit {
   }
 
   deleteProduct(id: number) {
-    console.log('cancelando deleção produto de id:', id);
+    this.store.setLoading(true);
+
+    this.service.delete(id).subscribe({
+      next: () => this.store.load(),
+      complete: () => this.store.setLoading(false)
+    });
   }
 
   editProduct(product: Product) {

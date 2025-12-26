@@ -9,7 +9,7 @@ import { API_CONFIG } from '../../../core/http/api.config';
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
   private http: HttpClient = inject(HttpClient);
-  private apiUrl: string = API_CONFIG + 'products';
+  private apiUrl = `${API_CONFIG.baseUrl}products`;
   private useMock = environment.useMock;
 
   getAll(): Observable<Product[]> {
@@ -20,7 +20,7 @@ export class ProductsService {
   }
 
   getById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.apiUrl}/${id}`);
+    return this.http.get<Product>(`${this.apiUrl}/product/${id}`);
   }
 
   create(product: Product): Observable<Product> {

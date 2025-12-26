@@ -30,7 +30,9 @@
         formControlName="description"
         placeholder="Descreva o produto"
         rows="3"></textarea>
-      <div class="char-count">{{ descriptionLength() }}/500 caracteres</div>
+      <div class="char-count">
+        {{ descriptionLength().length }}/500 caracteres
+      </div>
     </div>
 
     <div class="form-row">
@@ -56,7 +58,7 @@
     <div class="form-actions">
       <app-button (click)="goBack()" [label]="'cancelar'" [type]="'back-btn'" />
       <app-button
-        (click)="goBack()"
+        (click)="submit()"
         [disabled]="productForm.invalid || isLoading()"
         [label]="isEditMode() ? 'Atualizar Produto' : 'Criar Produto'"
         [type]="'add-btn'"
