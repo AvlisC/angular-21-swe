@@ -12,9 +12,7 @@ import { Router } from '@angular/router';
 import { Product } from '../../models/product.model';
 import { PRODUCTS_ROUTES } from '../../../../core/constants/routes';
 import { AddButtonComponent } from '../../../../shared/icons/app-add-button/add-button.component';
-import { AppSpinner } from '../../../../shared/ui/app-spinner/app-spinner';
-import { AppTitle } from '../../../../shared/ui/app-title/app-title';
-import { AppButton } from '../../../../shared/ui/app-button/app-button';
+import { AppSpinner, AppTitle, AppButton } from '../../../../shared/ui';
 
 @Component({
   selector: 'app-product-list',

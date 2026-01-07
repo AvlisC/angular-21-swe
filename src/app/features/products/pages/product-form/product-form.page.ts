@@ -9,10 +9,8 @@ import { ProductsService } from '../../services/products.service';
 import { Router } from '@angular/router';
 import { PRODUCTS_ROUTES } from '../../../../core/constants/routes';
 import { ProductsStore } from '../../products.store';
-import { AppButton } from '../../../../shared/ui/app-button/app-button';
-import { AppSpinner } from '../../../../shared/ui/app-spinner/app-spinner';
-import { AppTitle } from '../../../../shared/ui/app-title/app-title';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AppSpinner, AppTitle, AppButton } from '../../../../shared/ui';
 
 @Component({
   selector: 'app-product-form',
