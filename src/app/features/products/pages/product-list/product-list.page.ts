@@ -13,6 +13,7 @@ import { Product } from '../../models/product.model';
 import { PRODUCTS_ROUTES } from '../../../../core/constants/routes';
 import { AddButtonComponent } from '../../../../shared/icons/app-add-button/add-button.component';
 import { AppSpinner, AppTitle, AppButton } from '../../../../shared/ui';
+import { LoggerService } from '../../../../core/services/logger.service';
 
 @Component({
   selector: 'app-product-list',
@@ -34,6 +35,7 @@ export class ProductListPage implements OnInit {
   private service = inject(ProductsService);
   readonly store = inject(ProductsStore);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   readonly isLoading = this.store.loading;
   readonly createdAt = new Date();
@@ -66,8 +68,12 @@ export class ProductListPage implements OnInit {
     this.store.setLoading(true);
 
     this.service.delete(id).subscribe({
-      next: () => this.store.load(),
-      complete: () => this.store.setLoading(false)
+      next: () => {
+        this.store.load();
+        this.logger.info('Produto deletado com sucesso!', id);
+      },
+      complete: () => this.store.setLoading(false),
+      error: err => this.logger.error('Erro ao deletar produto', err)
     });
   }
 

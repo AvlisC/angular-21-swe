@@ -11,6 +11,7 @@ import { PRODUCTS_ROUTES } from '../../../../core/constants/routes';
 import { ProductsStore } from '../../products.store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AppSpinner, AppTitle, AppButton } from '../../../../shared/ui';
+import { LoggerService } from '../../../../core/services/logger.service';
 
 @Component({
   selector: 'app-product-form',
@@ -25,6 +26,7 @@ export class ProductFormPage implements OnInit {
   private fb = inject(FormBuilder);
   readonly store = inject(ProductsStore);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   readonly isLoading = this.store.loading;
   readonly isEditMode = this.store.isEditMode;
@@ -65,15 +67,33 @@ export class ProductFormPage implements OnInit {
       this.service
         .update(this.store.product().id!, this.productForm.getRawValue())
         .subscribe({
-          next: () => this.store.load(),
-          complete: () => this.goBack()
+          next: () => {
+            this.store.load();
+            this.logger.info(
+              'Produto atualizado com sucesso!',
+              this.productForm.getRawValue()
+            );
+          },
+          complete: () => this.goBack(),
+          error: err => {
+            this.logger.info('Erro ao atualizar produto', err);
+          }
         });
       return;
     }
 
     this.service.create(this.productForm.getRawValue()).subscribe({
-      next: () => this.store.load(),
-      complete: () => this.goBack()
+      next: () => {
+        this.store.load();
+        this.logger.info(
+          'Produto criado com sucesso!',
+          this.productForm.getRawValue()
+        );
+      },
+      complete: () => this.goBack(),
+      error: err => {
+        this.logger.info('Erro ao criar produto', err);
+      }
     });
   }
 
